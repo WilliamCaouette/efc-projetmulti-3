@@ -7,6 +7,9 @@
 /* v2.0.0
 /* ----------------------------------------------- */
 
+
+window.io = io('http://127.0.0.1:3000');
+
 var pJS = function(tag_id, params) {
 
     var canvas_el = document.querySelector('#' + tag_id + ' > .particles-js-canvas-el');

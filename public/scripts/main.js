@@ -3,7 +3,7 @@
 /*
     const socket = io("https://server-domain.com");
 */
-const socket = io(); 
+const socket = io('127.0.0.1:3000'); 
 console.log(socket)
 socket.on('connect', ()=>{
     getScreenStatus();

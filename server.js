@@ -1,26 +1,37 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors({
+    origin: ["http://127.0.0.1:8081/","http://127.0.0.1:3000"],
+}));
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+
+const io = require('socket.io');
 
 const path = require('path');
 
 const port =  3000;
 
 
-
 app.use(express.static(path.join(__dirname, "/public")));
 
-io.sockets.on('error', e=> console.log(e));
+
+// envoie en option un accès aux requetes de certaines ori
+;
+
+
+//const corsOptions = {    origin: ["http://127.0.0.1:8080", "http://127.0.0.1:5500", "https://tim.cgmatane.qc.ca", "https://jimzeeking.github.io"]};
 
 
 
+const socketServer = new io.Server(server, { cors: { origin: "http://127.0.0.1:8081"} });
 
+socketServer.sockets.on('error', e=> console.log(e));
 let screen;
 let controller;
 
 // évènement qui se lance à chaque connexion au socket. 
-io.sockets.on('connection', socket=>{
+socketServer.sockets.on('connection', socket=>{
     //log l'évènement de connexion au serveur
     socket.emit("connected", "vous êtes connecté à la borne");
     //récupère la référence au client écrans
@@ -41,4 +52,4 @@ io.sockets.on('connection', socket=>{
 
 
 
-server.listen(port, ()=> console.log(`server is running on port :${port}`));
+server.listen(port, '127.0.0.1', ()=> console.log(`server is running on port :${port}`));
