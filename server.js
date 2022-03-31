@@ -22,7 +22,7 @@ let controller;
 // évènement qui se lance à chaque connexion au socket. 
 io.sockets.on('connection', socket=>{
     //log l'évènement de connexion au serveur
-    socket.emit("hello", "world");
+    socket.emit("connected", "vous êtes connecté à la borne");
     //récupère la référence au client écrans
     socket.on('screen',()=>{
         screen = socket.id;
