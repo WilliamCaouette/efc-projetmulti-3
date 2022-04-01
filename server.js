@@ -9,9 +9,11 @@ const server = require('http').Server(app);
 const io = require('socket.io');
 
 const path = require('path');
-
+const shortid = require('shortid');
 const port =  3000;
 
+const id = shortid.generate();
+console.log(id);
 
 app.use(express.static(path.join(__dirname, "/public")));
 
@@ -38,10 +40,12 @@ socketServer.sockets.on('connection', socket=>{
     socket.on('screen',()=>{
         screen = socket.id;
         console.log("screen connected")
+        socketServer.to(screen).emit('sendID', {id:id});
     });
     //récupère la référence au client controlleur
     socket.on('controller',()=>{
         controller = socket.id;
+        console.log('controller connected');
         //dit au client diffuseur de lancer L'intro
         socket.emit('StartIntro', {connexion: true, url:""});
     });

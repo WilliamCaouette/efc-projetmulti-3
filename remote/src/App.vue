@@ -89,8 +89,12 @@ export default {
   },
   mounted(){
     window.particlesJS();
-    this.io = window.socket;
- }
+    this.io = window.io;
+
+    this.io.on('connected', ()=>{
+        this.io.emit('controller');
+    });
+ },
 }
 </script>
 
