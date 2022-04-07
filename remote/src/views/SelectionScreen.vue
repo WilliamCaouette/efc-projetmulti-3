@@ -1,5 +1,5 @@
 <template>
-  <section v-if="isConnected" class="option">
+  <section class="option">
         <div class="choix">
             <h2>Choisissez une option :</h2>
             <button class="btn-qr" id="btn-qr">Scannez le QR code</button>
