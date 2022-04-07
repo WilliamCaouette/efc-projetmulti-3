@@ -49,6 +49,16 @@ socketServer.sockets.on('connection', socket=>{
         //dit au client diffuseur de lancer L'intro
         socket.emit('StartIntro', {connexion: true, url:""});
     });
+    socket.on('testID', (ClientID)=>{
+        if(ClientID == id){
+            console.log('borne activé');
+            socketServer.to(screen).emit('phoneConnected');
+            socketServer.to(controller).emit('ScreenConnected', true);
+        }else{
+            console.log('tentative de connexion échoué ')
+            socketServer.to(controller).emit('ScreenConnected', false);
+        }
+    })
     socket.on('disconnect', ()=>{
         console.log('disconnect')
     });

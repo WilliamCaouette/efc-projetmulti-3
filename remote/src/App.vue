@@ -2,27 +2,21 @@
 <div>
     <div id="particles-js"></div>
 
-    <waiting-screen @click="changeToConnexion" :isWaiting="isWaitingScreen"></waiting-screen>
+    <waiting-screen v-if="!isConnected" @click="changeToConnexion" :isWaiting="isWaitingScreen"></waiting-screen>
 
     <main class="container">
       <div id="application">
 
             <!-- ********** etape accueil ********** -->
-            <connexion-screen v-if="!isWaitingScreen"></connexion-screen>
+            <connexion-screen @sendID="sendIDToSocket" v-if="!isWaitingScreen && !isConnected"></connexion-screen>
             <!-- ********** loading connexion ********** -->
             
 
             <!-- ********** etape option ********** -->
-            <section v-if="isconnected" class="option">
-                <div class="choix">
-                    <h2>Choisissez une option :</h2>
-                    <button class="btn-qr" id="btn-qr">Scannez le QR code</button>
-                    <button class="btn-manuel" id="btn-manuel">Séléction manuelle</button>
-                </div>
-            </section>
+            <selection-screen  v-if="isConnected"></selection-screen>
 
             <!-- ********** etape scanne ********** -->
-            <section v-if="isconnected" class="scan">
+            <section v-if="isConnected" class="scan">
                 <div class="retour">
                     <i class="fa-solid fa-angle-left"></i>
                     <span>Retour</span>
@@ -33,7 +27,7 @@
             </section>
 
             <!-- ********** etape manuelle ********** -->
-            <section v-if="isconnected" class="manuel">
+            <section v-if="isConnected" class="manuel">
                 <div class="retour"><i class="fa-solid fa-angle-left"></i><span>Retour</span></div>
                 <!-- <font-awesome-icon icon="fa-solid fa-angle-left" /> (Fontawsome avec VueJS)-->
                 <h2>Mode manuel</h2>
@@ -55,7 +49,7 @@
             </section>
 
             <!-- ********** etape diffusion ********** -->
-            <section v-if="isconnected" class="diffusion">
+            <section v-if="isConnected" class="diffusion">
                 <h2>Regardez devant vous !</h2>
                 <p>Diffusion de l'hologramme...</p>
             </section>
@@ -68,10 +62,11 @@
 <script>
 import WaitingScreen from './views/WaitingScreen.vue'
 import ConnexionScreen from './views/ConnexionScreen.vue'
+import SelectionScreen from './views/SelectionScreen.vue'
 
 
 export default {
-  components: { WaitingScreen, ConnexionScreen },
+  components: { WaitingScreen, ConnexionScreen, SelectionScreen },
   
   name: 'App',
   data(){
@@ -85,6 +80,9 @@ export default {
   methods:{
       changeToConnexion(){
           this.isWaitingScreen = false;
+      },
+      sendIDToSocket(id){
+          this.io.emit('testID', id);
       }
   },
   mounted(){
@@ -94,6 +92,13 @@ export default {
     this.io.on('connected', ()=>{
         this.io.emit('controller');
     });
+    this.io.on('ScreenConnected', (isConnectedToScreen)=>{
+        if(isConnectedToScreen){
+            this.isConnected = true;
+        }else{
+            return;
+        }
+    })
  },
 }
 </script>

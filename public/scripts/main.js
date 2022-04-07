@@ -1,10 +1,5 @@
 
-//si je veux l'utiliser depuis un domaine différent, je peux ajouter l'url dans les paranthèses
-/*
-    const socket = io("https://server-domain.com");
-*/
-const app = new Vue({
-    el: "#app",
+const app = Vue.createApp({
     data() {
       return {
           socket : null,
@@ -20,11 +15,15 @@ const app = new Vue({
     mounted(){
         this.socket = io('127.0.0.1:3000');
         this.socket.on('connect', ()=>{
-            console.log('connect')
+            console.log('connect');
             this.getScreenStatus();
         });
         this.socket.on('sendID', (id)=>{
             this.id = id.id;
+        });
+        this.socket.on('phoneConnected', ()=>{
+            this.isBroadCasting = true;
         })
     }
   });
+  app.mount('#app');
