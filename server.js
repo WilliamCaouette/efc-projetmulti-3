@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors({
-    origin: ["http://127.0.0.1:8080/","http://127.0.0.1:3000"],
+    origin: ["http://127.0.0.1:8081/","http://127.0.0.1:3000"],
 }));
 const server = require('http').Server(app);
 
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 
-const socketServer = new io.Server(server, { cors: { origin: "http://127.0.0.1:8080"} });
+const socketServer = new io.Server(server, { cors: { origin: "http://127.0.0.1:8081"} });
 
 socketServer.sockets.on('error', e=> console.log(e));
 let screen;
@@ -56,9 +56,14 @@ socketServer.sockets.on('connection', socket=>{
         }
         socketServer.to(controller).emit('ScreenConnected', ClientID == id);
     })
+    socket.on('startDiffusion', ()=>{
+        socketServer.to(screen).emit('broadcasting');
+        console.log('startDiffusion')
+    })
     socket.on('disconnect', ()=>{
         console.log('disconnect')
     });
+    
 });
 
 

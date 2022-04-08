@@ -2,7 +2,7 @@
 <div>
     <div id="particles-js"></div>
 
-    <waiting-screen v-if="!isConnected" @click="changeToConnexion" :isWaiting="isWaitingScreen"></waiting-screen>
+    <waiting-screen @click="changeToConnexion" :isWaiting="isWaitingScreen"></waiting-screen>
 
     <main class="container">
       <div id="application">
@@ -16,43 +16,12 @@
             <selection-screen @selectControle="selectControle"  v-if="isConnected && selectionType == ''"></selection-screen>
 
             <!-- ********** etape scanne ********** -->
-            <section v-if="isConnected && selectionType == 'QR'" class="scan">
-                <div class="retour">
-                    <i class="fa-solid fa-angle-left"></i>
-                    <span>Retour</span>
-                </div>
-                <!-- <font-awesome-icon icon="fa-solid fa-angle-left" /> (Fontawsome avec VueJS)-->
-                <h2>Scannez le QR code :</h2>
-                <div class="zone-scan" id="zone-scan"><span class="span-scan"></span></div>
-            </section>
-
+            <scan-screen @ReturnToSelection="selectControle" v-if="isConnected && selectionType == 'QR' && !isInDiffusion"></scan-screen>
             <!-- ********** etape manuelle ********** -->
-            <section v-if="isConnected && selectionType == 'Manuelle'" class="manuel">
-                <div class="retour"><i class="fa-solid fa-angle-left"></i><span>Retour</span></div>
-                <!-- <font-awesome-icon icon="fa-solid fa-angle-left" /> (Fontawsome avec VueJS)-->
-                <h2>Mode manuel</h2>
-                <h3>Sélectionnez une espèce</h3>
-                <div class="liste-manuel">
-                    <div>
-                        <img src="/assets/images/placeholder.png" alt="dessin de méduse" class="fluide">
-                    </div>
-                    <div>
-                        <img src="/assets/images/placeholder.png" alt="dessin d'une espèce extra-terrestre de graine" class="fluide">
-                    </div>
-                    <div>
-                        <img src="/assets/images/placeholder.png" alt="dessin de poisson" class="fluide">
-                    </div>
-                    <div>
-                        <img src="/assets/images/placeholder.png" alt="dessin d'un feu-folet" class="fluide">
-                    </div>
-                </div>
-            </section>
+            <manual-selection-screen @StartDiffusion="startDiffusion" @ReturnToSelection="selectControle" v-if="isConnected && selectionType == 'Manuelle' && !isInDiffusion" ></manual-selection-screen>
 
             <!-- ********** etape diffusion ********** -->
-            <section v-if="isConnected && isInDiffusion" class="diffusion">
-                <h2>Regardez devant vous !</h2>
-                <p>Diffusion de l'hologramme...</p>
-            </section>
+            <diffusion-screen  v-if="isInDiffusion"></diffusion-screen>
 
         </div>
     </main>
@@ -63,10 +32,13 @@
 import WaitingScreen from './views/WaitingScreen.vue'
 import ConnexionScreen from './views/ConnexionScreen.vue'
 import SelectionScreen from './views/SelectionScreen.vue'
+import ManualSelectionScreen from './views/ManualSelectionScreen.vue'
+import DiffusionScreen from './views/DiffusionScreen.vue'
+import ScanScreen from './views/ScanScreen.vue'
 
 
 export default {
-  components: { WaitingScreen, ConnexionScreen, SelectionScreen },
+  components: { WaitingScreen, ConnexionScreen, SelectionScreen, ManualSelectionScreen, DiffusionScreen, ScanScreen},
   
   name: 'App',
   data(){
@@ -88,6 +60,10 @@ export default {
       },
       selectControle(type){
           this.selectionType = type;
+      },
+      startDiffusion(){
+          this.isInDiffusion = true;
+          this.io.emit('startDiffusion');
       }
   },
   mounted(){

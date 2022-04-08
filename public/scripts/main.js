@@ -5,6 +5,7 @@ const app = Vue.createApp({
           socket : null,
           id : null,
           isBroadCasting : false,
+          isConnected:false
       };
     },
     methods: {
@@ -22,7 +23,12 @@ const app = Vue.createApp({
             this.id = id.id;
         });
         this.socket.on('phoneConnected', ()=>{
+            this.isConnected = true;
+        })
+        this.socket.on('broadcasting', ()=>{
+            console.log('here')
             this.isBroadCasting = true;
+            
         })
     }
   });

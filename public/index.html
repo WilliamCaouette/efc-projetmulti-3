@@ -12,7 +12,8 @@
 </head>
 <body>
     <div id="app">
-        <h1 v-if='!isBroadCasting'>{{id}}</h1>
+        <h1 v-if='!isConnected'>{{id}}</h1>
+        <video v-if="isBroadCasting" src="video/Atokirina_son.mp4" autoplay></video>
     </div>
 </body>
 </html>
