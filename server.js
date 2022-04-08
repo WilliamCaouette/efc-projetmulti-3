@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors({
-    origin: ["http://127.0.0.1:8081/","http://127.0.0.1:3000"],
+    origin: ["http://127.0.0.1:8080/","http://127.0.0.1:3000"],
 }));
 const server = require('http').Server(app);
 
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 
-const socketServer = new io.Server(server, { cors: { origin: "http://127.0.0.1:8081"} });
+const socketServer = new io.Server(server, { cors: { origin: "http://127.0.0.1:8080"} });
 
 socketServer.sockets.on('error', e=> console.log(e));
 let screen;
@@ -53,11 +53,8 @@ socketServer.sockets.on('connection', socket=>{
         if(ClientID == id){
             console.log('borne activé');
             socketServer.to(screen).emit('phoneConnected');
-            socketServer.to(controller).emit('ScreenConnected', true);
-        }else{
-            console.log('tentative de connexion échoué ')
-            socketServer.to(controller).emit('ScreenConnected', false);
         }
+        socketServer.to(controller).emit('ScreenConnected', ClientID == id);
     })
     socket.on('disconnect', ()=>{
         console.log('disconnect')
@@ -66,4 +63,4 @@ socketServer.sockets.on('connection', socket=>{
 
 
 
-server.listen(port, '127.0.0.1', ()=> console.log(`server is running on port :${port}`));
+server.listen(port, '127.0.0.1', ()=> console.log(`server is running on  : http://127.0.0.1:${port}`));

@@ -13,10 +13,10 @@
             
 
             <!-- ********** etape option ********** -->
-            <selection-screen  v-if="isConnected"></selection-screen>
+            <selection-screen @selectControle="selectControle"  v-if="isConnected && selectionType == ''"></selection-screen>
 
             <!-- ********** etape scanne ********** -->
-            <section v-if="isConnected" class="scan">
+            <section v-if="isConnected && selectionType == 'QR'" class="scan">
                 <div class="retour">
                     <i class="fa-solid fa-angle-left"></i>
                     <span>Retour</span>
@@ -27,7 +27,7 @@
             </section>
 
             <!-- ********** etape manuelle ********** -->
-            <section v-if="isConnected" class="manuel">
+            <section v-if="isConnected && selectionType == 'Manuelle'" class="manuel">
                 <div class="retour"><i class="fa-solid fa-angle-left"></i><span>Retour</span></div>
                 <!-- <font-awesome-icon icon="fa-solid fa-angle-left" /> (Fontawsome avec VueJS)-->
                 <h2>Mode manuel</h2>
@@ -49,7 +49,7 @@
             </section>
 
             <!-- ********** etape diffusion ********** -->
-            <section v-if="isConnected" class="diffusion">
+            <section v-if="isConnected && isInDiffusion" class="diffusion">
                 <h2>Regardez devant vous !</h2>
                 <p>Diffusion de l'hologramme...</p>
             </section>
@@ -75,6 +75,8 @@ export default {
       particles: null,
       isWaitingScreen : true,
       io : null,
+      selectionType: '',
+      isInDiffusion: false
     }
   }, 
   methods:{
@@ -83,6 +85,9 @@ export default {
       },
       sendIDToSocket(id){
           this.io.emit('testID', id);
+      },
+      selectControle(type){
+          this.selectionType = type;
       }
   },
   mounted(){
@@ -93,7 +98,9 @@ export default {
         this.io.emit('controller');
     });
     this.io.on('ScreenConnected', (isConnectedToScreen)=>{
+        console.log('here')
         if(isConnectedToScreen){
+            console.log('here')
             this.isConnected = true;
         }else{
             return;
